@@ -68,25 +68,25 @@
 #define MCP794XX_REG_MONTH  0x05
 #define MCP794XX_REG_YEAR   0x06
 
-#define MCP794XX_REG_CONTROL		0x07
-#	define MCP794XX_BIT_OUT		(1 << 7)
-#	define MCP794XX_BIT_SQWE	(1 << 6)
-#	define MCP794XX_BIT_ALM0_EN	(1 << 4)
-#	define MCP794XX_BIT_ALM1_EN	(1 << 5)
+#define MCP794XX_REG_CONTROL        0x07
+#   define MCP794XX_BIT_OUT     (1 << 7)
+#   define MCP794XX_BIT_SQWE    (1 << 6)
+#   define MCP794XX_BIT_ALM0_EN (1 << 4)
+#   define MCP794XX_BIT_ALM1_EN (1 << 5)
 #define OUT_MASK  0x7f
 #define SQWE_MASK 0xbf
 #define ALM0_EN_MASK 0xef
 #define ALM1_EN_MASK 0xdf
 
-#define MCP794XX_REG_ALARM0_BASE	0x0a
-#define MCP794XX_REG_ALARM0_CTRL	0x0d
-#define MCP794XX_REG_ALARM1_BASE	0x11
-#define MCP794XX_REG_ALARM1_CTRL	0x14
-#	define MCP794XX_BIT_ALMX_IF	 (1 << 3)
-#	define MCP794XX_BIT_ALMX_C0	 (1 << 4)
-#	define MCP794XX_BIT_ALMX_C1	 (1 << 5)
-#	define MCP794XX_BIT_ALMX_C2	 (1 << 6)
-#	define MCP794XX_BIT_ALMX_POL (1 << 7)
+#define MCP794XX_REG_ALARM0_BASE    0x0a
+#define MCP794XX_REG_ALARM0_CTRL    0x0d
+#define MCP794XX_REG_ALARM1_BASE    0x11
+#define MCP794XX_REG_ALARM1_CTRL    0x14
+#   define MCP794XX_BIT_ALMX_IF  (1 << 3)
+#   define MCP794XX_BIT_ALMX_C0  (1 << 4)
+#   define MCP794XX_BIT_ALMX_C1  (1 << 5)
+#   define MCP794XX_BIT_ALMX_C2  (1 << 6)
+#   define MCP794XX_BIT_ALMX_POL (1 << 7)
 #define ALMX_IF_MASK  0xf7
 #define ALMX_C0_MASK  0xef
 #define ALMX_C1_MASK  0xdf
@@ -184,12 +184,14 @@ esp_err_t mcp7940_get_time(i2c_dev_t *dev, struct tm *time)
 
     time->tm_sec = bcd2dec(buf[0] & SECONDS_MASK);
     time->tm_min = bcd2dec(buf[1]);
-    if (buf[2] & MCP794XX_BIT_HOUR12) {
+    if (buf[2] & MCP794XX_BIT_HOUR12)
+    {
         // RTC in 12-hour mode
         time->tm_hour = bcd2dec(buf[2] & HOUR12_MASK) - 1;
         if (buf[2] & MCP794XX_BIT_PM)
             time->tm_hour += 12;
-    } else
+    }
+    else
         time->tm_hour = bcd2dec(buf[2] & HOUR24_MASK);
     time->tm_wday = bcd2dec(buf[3]) - 1;
     time->tm_mday = bcd2dec(buf[4]);
@@ -205,7 +207,8 @@ esp_err_t mcp7940_set_time(i2c_dev_t *dev, const struct tm *time)
 
     uint8_t buf[7] = { dec2bcd(time->tm_sec),       dec2bcd(time->tm_min),  dec2bcd(time->tm_hour),
                        dec2bcd(time->tm_wday + 1),  dec2bcd(time->tm_mday), dec2bcd(time->tm_mon + 1),
-                       dec2bcd(time->tm_year - 100) };
+                       dec2bcd(time->tm_year - 100)
+                     };
 
     I2C_DEV_TAKE_MUTEX(dev);
     I2C_DEV_CHECK(dev, i2c_dev_write_reg(dev, MCP794XX_REG_SECS, buf, sizeof(buf)));

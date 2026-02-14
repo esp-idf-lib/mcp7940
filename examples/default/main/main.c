@@ -25,7 +25,7 @@ void mcp7940_test(void *pvParameters)
 
     while (1)
     {
-        mcp7940_get_time(&dev, &time);  
+        mcp7940_get_time(&dev, &time);
         printf("%04d-%02d-%02d %02d:%02d:%02d\n", time.tm_year + 1900 /*Add 1900 for better readability*/, time.tm_mon + 1,
                time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec);
 
